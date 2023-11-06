@@ -1,35 +1,53 @@
-# 安装并加载 ggplot2 包
-install.packages("ggplot2")
+# Load ggplot2 lib
 library(ggplot2)
 
-# 读取 CSV 文件
-data <- read.csv("C:/Users/antus/Dropbox (The University of Manchester)/1st Year/cvBC15-YMu-2023-10-16/analysis/camera_1_trial_1_2023-09-17-112320-0000DLC_resnet50_cvBC15Oct16shuffle1_500000V2.csv", header = FALSE)
+# read csv file
+data <- read.csv("C:/Users/g93116ym/Dropbox (The University of Manchester)/1st Year/cvBC15-YMu-2023-10-16/analysis/camera_1_trial_1_2023-09-17-112320-0000DLC_resnet50_cvBC15Oct16shuffle1_500000V2.csv", header = FALSE)
 
-# 选择数据，假设你的 CSV 文件中的帧数是第一列，置信度分别在第四、第七、第十列
-frames <- data[,1] # 第一列数据为帧数
-snout_confidence <- data[,4] # 第四列为 snout 的置信度
-right_ear_confidence <- data[,7] # 第七列为右耳的置信度
-left_ear_confidence <- data[,10] # 第十列为左耳的置信度
-
-# 创建一个数据框架来容纳这些数据
+# Select data, ensure the confidence score of snout, right ear and left ear are in right column
+frames <- data[,1] # the first line is frame
+snout_confidence <- data[,4] # The fourth line is confidence score of snout
+right_ear_confidence <- data[,7] # The seventh line is the confidence score of right ear
+left_ear_confidence <- data[,10] # The tenth line is the confidence score of left ear
+# Create a dataset frame to store the data
 plot_data <- data.frame(Frame=frames, Snout=snout_confidence, RightEar=right_ear_confidence, LeftEar=left_ear_confidence)
 
-# 将数据转换为长格式，这样 ggplot2 可以更容易地绘制它们
+# Converts data to long format so ggplot2 can plot them more easily
 library(tidyr)
 long_data <- gather(plot_data, Key, Confidence, -Frame)
 
-# 对数据按照置信度（Confidence）降序排列
-install.packages("dplyr")
-library(dplyr)
-sorted_data <- long_data %>% 
-  arrange(desc(Confidence))
+# Sort the data in descending order of confidence.
+#install.packages("dplyr")
+#library(dplyr)
+#sorted_data <- long_data %>% 
+#  arrange(desc(Confidence))
 
-# 绘制图形
-p <- ggplot(long_data, aes(x=Frame, y=Confidence, color=Key, group=Key)) +
-  geom_line() + # 绘制折线图
-  theme_minimal() + # 使用简洁的主题
-  labs(x="Frame Index", y="Confidence Level", title="Confidence Level Over Frames") + # 添加标签
-  scale_color_manual(values=c("blue", "orange", "red")) # 为不同的变量指定颜色
+# Assuming that long_data is already in long format and that ggplot2 has been loaded, it is possible to use ggplot2 as an example.
 
-# 显示图形
-print(p)
+# Heat mapping using ggplot
+#p <- ggplot(long_data, aes(x = Frame, y = Key, fill = Confidence)) + 
+#  geom_tile() + # Using geom_tile to create heat maps
+#  theme_minimal() + # Use a clean theme
+#  labs(x = "Frame Index", y = "Key", fill = "Confidence Level", title = "Confidence Level Heatmap") + # Update Tags
+#  scale_fill_gradient(low = "blue", high = "red") # Using gradient colours to fill heat maps
+
+
+# Display heat mapping
+#print(p)
+
+# Load Highcharter lib
+library(highcharter)
+# Firstly, make sure the data is numerical, as highcharter needs numerical data to plot heat maps
+long_data$Frame <- as.numeric(as.character(long_data$Frame))
+long_data$Confidence <- as.numeric(as.character(long_data$Confidence))
+
+# Creating heat maps with highcharter
+# Using Highcharts' built-in themes
+hchart(long_data, "heatmap", hcaes(x = Frame, y = Key, value = Confidence)) %>%
+  hc_title(text = "Confidence Level Heatmap") %>%
+  hc_xAxis(title = list(text = "Frame Index")) %>%
+  hc_yAxis(title = list(text = "Confidence Score")) %>%
+  hc_colorAxis(stops = color_stops(n = 10, colors = c("blue", "red"))) %>%
+  hc_legend(title = list(text = "Confidence Level")) %>%
+  hc_add_theme(hc_theme_darkunica()) # Using Highcharts' built-in themes
+
