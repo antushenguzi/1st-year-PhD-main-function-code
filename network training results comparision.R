@@ -43,7 +43,7 @@ long_data$Confidence <- as.numeric(as.character(long_data$Confidence))
 
 # Creating heat maps with highcharter
 # Using Highcharts' built-in themes
-hchart(long_data, "heatmap", hcaes(x = Frame, y = Key, value = Confidence)) %>%
+hchart_object <- hchart(long_data, "heatmap", hcaes(x = Frame, y = Key, value = Confidence)) %>%
   hc_title(text = "Confidence Level Heatmap") %>%
   hc_xAxis(title = list(text = "Frame Index")) %>%
   hc_yAxis(title = list(text = "Confidence Score")) %>%
@@ -51,3 +51,7 @@ hchart(long_data, "heatmap", hcaes(x = Frame, y = Key, value = Confidence)) %>%
   hc_legend(title = list(text = "Confidence Level")) %>%
   hc_add_theme(hc_theme_darkunica()) # Using Highcharts' built-in themes
 
+# Load htmlwidgets
+library(htmlwidgets)
+# Save heat mapping as HTML file in the same folder
+saveWidget(hchart_object, file = "Confidence_Level_Heatmap.html")
