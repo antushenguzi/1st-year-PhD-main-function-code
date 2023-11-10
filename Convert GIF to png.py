@@ -1,7 +1,7 @@
 import imageio
 import os
 # 打开GIF文件
-reader = imageio.get_reader(r'C:\Users\g93116ym\Downloads\camera_1_trial_1_2023-09-17-112320-0000dlc_resnet.gif')
+reader = imageio.get_reader(r'F:\dlc237.gif')
 
 # 获取GIF中的帧数
 num_frames = reader.get_length()

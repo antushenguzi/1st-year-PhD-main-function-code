@@ -1,12 +1,20 @@
-# 安装和加载magick包
+# Installing and loading magick packages
 install.packages("magick")
 library(magick)
 
-# 读取GIF文件
-gif_image <- image_read('C:/Users/g93116ym/Downloads/camera_1_trial_1_2023-09-17-112320-0000dlc_resnet.gif')
+# Reading GIF files
+gif_image <- image_read('F:\\dlc237.gif')
 
-# 将每帧转换为单独的图片
-gif_frames <- image_convert(gif_image, format = 'png')
+# Get GIF frames
+num_frames <- image_info(gif_image)$frames
 
-# 保存每帧为PNG
-image_write(gif_frames, path = 'camera_1_trial_1_2023-09-17-112320-0000dlc_resnet.png')
+# Select every 100 frames
+frames_to_save <- seq(1, num_frames, by = 100)
+
+# Convert selected frames to individual images and save them
+for (i in frames_to_save) {
+  frame <- image_read(gif_image[i])
+  frame <- image_convert(frame, format = 'png')
+  image_write(frame, path = sprintf('frame_%03d.png', i))
+}
+
